@@ -1,12 +1,18 @@
-const BASE_URL = "const BASE_URL = "https://treasurehunt.cs.ucy.ac.cy/api";
+const BASE_URL = "https://treasurehunt.cs.ucy.ac.cy/api";
 
-//let sessionId = null;
+// sessionId comes from app.js (do NOT declare again here)
 
+// =======================
+// GET AVAILABLE HUNTS
+// =======================
 async function getHunts(){
     const res = await fetch(BASE_URL + "/hunts");
     return await res.json();
 }
 
+// =======================
+// START SESSION
+// =======================
 async function startSession(huntId, name){
     const res = await fetch(BASE_URL + "/session/start",{
         method:"POST",
@@ -18,11 +24,17 @@ async function startSession(huntId, name){
     sessionId = data.sessionId;
 }
 
+// =======================
+// GET QUESTION
+// =======================
 async function getQuestion(){
     const res = await fetch(BASE_URL + "/question?session=" + sessionId);
     return await res.json();
 }
 
+// =======================
+// SEND ANSWER
+// =======================
 async function sendAnswer(answer,lat,lon){
     const res = await fetch(BASE_URL + "/answer",{
         method:"POST",
