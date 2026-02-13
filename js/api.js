@@ -5,11 +5,13 @@ const BASE_URL = "https://opentdb.com/api.php?amount=1&type=multiple";
 // =======================
 // GET AVAILABLE HUNTS
 // =======================
-async function getHunts(){
+// IMPORTANT: must return ARRAY
+async function getHunts() {
     return [
-        { id: 1, name: "General Knowledge Hunt" }
+        { id: 1, name: "Online Trivia Hunt" }
     ];
 }
+
 // =======================
 // START SESSION
 // =======================
