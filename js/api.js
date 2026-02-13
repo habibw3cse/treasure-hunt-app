@@ -6,10 +6,10 @@ const BASE_URL = "https://opentdb.com/api.php?amount=1&type=multiple";
 // GET AVAILABLE HUNTS
 // =======================
 async function getHunts(){
-    const res = await fetch(BASE_URL + "/hunts");
-    return await res.json();
+    return [
+        { id: 1, name: "General Knowledge Hunt" }
+    ];
 }
-
 // =======================
 // START SESSION
 // =======================
