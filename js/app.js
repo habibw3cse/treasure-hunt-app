@@ -1,13 +1,9 @@
-// ==============================
-// GLOBAL VARIABLES
-// ==============================
-let sessionId = null;
+// ================= GLOBAL STATE =================
 let currentAnswer = "";
 
-// ==============================
-// LOAD AVAILABLE HUNTS
-// ==============================
+// ================= LOAD HUNTS =================
 async function loadHunts() {
+
     const hunts = await getHunts();
 
     let html = "<h3>Select a Hunt</h3>";
@@ -19,10 +15,9 @@ async function loadHunts() {
     document.getElementById("huntList").innerHTML = html;
 }
 
-// ==============================
-// START GAME
-// ==============================
+// ================= START GAME =================
 async function startGame(id) {
+
     const name = document.getElementById("playerName").value;
 
     if (!name) {
@@ -38,9 +33,7 @@ async function startGame(id) {
     loadQuestion();
 }
 
-// ==============================
-// LOAD QUESTION
-// ==============================
+// ================= LOAD QUESTION =================
 async function loadQuestion() {
 
     document.getElementById("feedback").innerText = "";
@@ -48,7 +41,7 @@ async function loadQuestion() {
 
     const q = await getQuestion();
 
-    // Game finished
+    // ===== GAME FINISHED =====
     if (q.finished) {
         document.getElementById("questionScreen").style.display = "none";
         document.getElementById("endScreen").style.display = "block";
@@ -56,76 +49,64 @@ async function loadQuestion() {
         return;
     }
 
+    // ===== SHOW QUESTION =====
     document.getElementById("questionText").innerText = q.text;
 
     buildAnswerUI(q.type, q.options);
 }
 
-// ==============================
-// BUILD INPUT BASED ON TYPE
-// ==============================
+
+// ================= BUILD ANSWER UI =================
 function buildAnswerUI(type, options) {
 
     let html = "";
 
-    if (type === "text" || type === "number") {
-        html = `<input id="answerInput" placeholder="Type your answer">`;
-    }
-
-    else if (type === "boolean") {
-        html = `
-        <button onclick="setAnswer('True')">True</button>
-        <button onclick="setAnswer('False')">False</button>`;
-    }
-
-    else if (type === "mcq") {
+    if (type === "mcq") {
         options.forEach(opt => {
             html += `<button onclick="setAnswer('${opt}')">${opt}</button><br>`;
         });
+    } else {
+        html = `<input id="answerInput" placeholder="Type your answer">`;
     }
 
     document.getElementById("answerArea").innerHTML = html;
 }
 
-// ==============================
-// STORE SELECTED ANSWER
-// ==============================
+// ================= STORE ANSWER =================
 function setAnswer(ans) {
     currentAnswer = ans;
 }
 
-// ==============================
-// SUBMIT ANSWER
-// ==============================
+// ================= SUBMIT ANSWER =================
 async function submitAnswer() {
 
     let ans = currentAnswer;
 
-    if (!ans) {
-        const input = document.getElementById("answerInput");
-        if (input) ans = input.value;
-    }
+    const input = document.getElementById("answerInput");
+    if (!ans && input) ans = input.value.trim();
 
     if (!ans) {
         alert("Enter or select an answer");
         return;
     }
 
-    const res = await sendAnswer(ans, latitude, longitude);
+    // GET GPS FIRST
+    await getCurrentLocation();
+
+    const res = await apiSubmitAnswer(ans, latitude, longitude);
 
     if (res.correct) {
         document.getElementById("feedback").innerText = "✅ Correct!";
         setTimeout(loadQuestion, 800);
-    }
-    else {
-        document.getElementById("feedback").innerText = "❌ Wrong! Try again";
+    } else {
+        document.getElementById("feedback").innerText = "❌ Wrong!";
     }
 }
 
-// ==============================
-// SKIP QUESTION
-// ==============================
-async function skipQuestion() {
-    document.getElementById("feedback").innerText = "Question skipped";
-    setTimeout(loadQuestion, 500);
+
+
+// ================= SKIP =================
+function skipQuestion(){
+    loadQuestion();
 }
+
