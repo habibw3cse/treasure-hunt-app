@@ -1,1 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Treasure Hunt App</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<h2>Treasure Hunt</h2>
+
+<!-- START SCREEN -->
+<div id="startScreen">
+    <input type="text" id="playerName" placeholder="Enter your name">
+    <button onclick="loadHunts()">Start Game</button>
+
+    <div id="huntList"></div>
+</div>
+
+<!-- QUESTION SCREEN -->
+<div id="questionScreen" style="display:none;">
+    <h3 id="questionText"></h3>
+
+    <div id="answerArea"></div>
+
+    <button onclick="submitAnswer()">Submit Answer</button>
+    <button onclick="skipQuestion()">Skip</button>
+
+    <p id="feedback"></p>
+</div>
+
+<!-- END SCREEN -->
+<div id="endScreen" style="display:none;">
+    <h2>Game Finished!</h2>
+    <p id="finalScore"></p>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/location.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
 
