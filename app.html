@@ -4,7 +4,65 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Treasure Hunt App</title>
-<link rel="stylesheet" href="css/style.css">
+<p id="statusMsg" style="color:red;font-weight:bold"></p>
+<style>
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    text-align:center;
+    background:#f2f5f9;
+    margin:0;
+    padding:20px;
+}
+
+h2{color:#1a73e8}
+
+button{
+    padding:12px 18px;
+    margin:8px;
+    border:none;
+    border-radius:8px;
+    background:#1a73e8;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+}
+
+button:hover{background:#0c59c7}
+
+#questionScreen,#endScreen{display:none}
+
+input{
+    padding:10px;
+    width:70%;
+    max-width:300px;
+    margin:10px;
+    border-radius:6px;
+    border:1px solid #ccc;
+}
+
+#feedback{
+    font-size:18px;
+    font-weight:bold;
+    margin-top:10px;
+}
+#loadingMsg::after{
+    content:"";
+    display:inline-block;
+    width:12px;
+    height:12px;
+    border:2px solid #1a73e8;
+    border-top:2px solid transparent;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+    margin-left:8px;
+}
+
+@keyframes spin{
+    from{transform:rotate(0deg)}
+    to{transform:rotate(360deg)}
+}
+
+</style>
 </head>
 
 <body>
@@ -13,18 +71,20 @@
 
 <!-- START SCREEN -->
 <div id="startScreen">
-    <input type="text" id="playerName" placeholder="Enter your name">
+    <input type="text" id="playerName" placeholder="Enter your name" />
+    <br>
     <button onclick="loadHunts()">Start Game</button>
 
     <div id="huntList"></div>
 </div>
 
 <!-- QUESTION SCREEN -->
-<div id="questionScreen" style="display:none;">
+<div id="questionScreen">
     <h3 id="questionText"></h3>
 
     <div id="answerArea"></div>
 
+    <br>
     <button onclick="submitAnswer()">Submit Answer</button>
     <button onclick="skipQuestion()">Skip</button>
 
@@ -32,17 +92,16 @@
 </div>
 
 <!-- END SCREEN -->
-<div id="endScreen" style="display:none;">
-    <h2>Game Finished!</h2>
+<div id="endScreen">
+    <h2>Game Finished</h2>
     <p id="finalScore"></p>
+    <button onclick="location.reload()">Play Again</button>
 </div>
 
-<script src="js/mockapi.js"></script>
+
+<!-- SCRIPTS (ORDER VERY IMPORTANT) -->
 <script src="js/api.js"></script>
-<script src="js/location.js"></script>
 <script src="js/app.js"></script>
-
-
+<script src="js/location.js"></script>
 </body>
 </html>
-
