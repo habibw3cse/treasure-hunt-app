@@ -1,6 +1,6 @@
 const BASE_URL = "const BASE_URL = "https://treasurehunt.cs.ucy.ac.cy/api";
 
-let sessionId = null;
+//let sessionId = null;
 
 async function getHunts(){
     const res = await fetch(BASE_URL + "/hunts");
