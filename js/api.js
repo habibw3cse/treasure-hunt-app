@@ -1,53 +1,53 @@
-const BASE_URL = "https://opentdb.com/api.php?amount=1&type=multiple";
+// =============================
+// DEVELOPMENT MODE (NO SERVER)
+// =============================
 
-// sessionId comes from app.js (do NOT declare again here)
+let currentCorrectAnswer = "";
 
-// =======================
-// GET AVAILABLE HUNTS
-// =======================
-// IMPORTANT: must return ARRAY
+// Fake hunt list
 async function getHunts() {
     return [
         { id: 1, name: "Online Trivia Hunt" }
     ];
 }
 
-// =======================
-// START SESSION
-// =======================
-async function startSession(huntId, name){
-    const res = await fetch(BASE_URL + "/session/start",{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({huntId:huntId, playerName:name})
-    });
+// Fake start session
+async function startSession(huntId, name) {
+    console.log("Session started for:", name);
+}
 
+// Get question from free trivia API
+async function getQuestion() {
+
+    const res = await fetch("https://opentdb.com/api.php?amount=1&type=multiple");
     const data = await res.json();
-    sessionId = data.sessionId;
+
+    const q = data.results[0];
+
+    currentCorrectAnswer = q.correct_answer;
+
+    return {
+        text: decodeHTML(q.question),
+        type: "mcq",
+        options: shuffle([q.correct_answer, ...q.incorrect_answers]),
+        finished: false
+    };
 }
 
-// =======================
-// GET QUESTION
-// =======================
-async function getQuestion(){
-    const res = await fetch(BASE_URL + "/question?session=" + sessionId);
-    return await res.json();
+// Check answer locally
+async function sendAnswer(answer, lat, lon) {
+    return {
+        correct: answer === currentCorrectAnswer
+    };
 }
 
-// =======================
-// SEND ANSWER
-// =======================
-async function sendAnswer(answer,lat,lon){
-    const res = await fetch(BASE_URL + "/answer",{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({
-            sessionId:sessionId,
-            answer:answer,
-            latitude:lat,
-            longitude:lon
-        })
-    });
+// helpers
+function shuffle(arr) {
+    return arr.sort(() => Math.random() - 0.5);
+}
 
-    return await res.json();
+function decodeHTML(html) {
+    const txt = document.createElement("textarea");
+    txt.innerHTML = html;
+    return txt.value;
 }
