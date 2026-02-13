@@ -1,4 +1,4 @@
-const BASE_URL = "https://example.com/api";
+const BASE_URL = "const BASE_URL = "https://treasurehunt.cs.ucy.ac.cy/api";
 
 let sessionId = null;
 
