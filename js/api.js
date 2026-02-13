@@ -1,53 +1,96 @@
-// =============================
-// DEVELOPMENT MODE (NO SERVER)
-// =============================
+// ================= API LAYER =================
+// Development mode using free trivia API
 
-let currentCorrectAnswer = "";
+let questionCount = 0;
+const MAX_QUESTIONS = 5;
+let correctAnswer = "";
+let score = 0;
 
-// Fake hunt list
-async function getHunts() {
+
+// -------- GET HUNTS --------
+async function getHunts(){
     return [
         { id: 1, name: "Online Trivia Hunt" }
     ];
 }
 
-// Fake start session
-async function startSession(huntId, name) {
-    console.log("Session started for:", name);
+// -------- START SESSION --------
+async function startSession(huntId, playerName){
+    console.log("Session started for:", playerName);
+    score = 0;
 }
 
-// Get question from free trivia API
-async function getQuestion() {
+// -------- GET QUESTION --------
+async function getQuestion(){
 
-    const res = await fetch("https://opentdb.com/api.php?amount=1&type=multiple");
-    const data = await res.json();
+    try {
 
-    const q = data.results[0];
+        // stop game after max questions
+        if(questionCount >= MAX_QUESTIONS){
+            return { finished:true, score:score };
+        }
 
-    currentCorrectAnswer = q.correct_answer;
+        const res = await fetch("https://opentdb.com/api.php?amount=1&type=multiple");
+
+        if(!res.ok){
+            document.getElementById("statusMsg").innerText =
+                "❌ Server error while loading question";
+            return { finished:true, score:score };
+        }
+
+        const data = await res.json();
+        const q = data.results[0];
+
+        // store correct answer
+        correctAnswer = decodeHTML(q.correct_answer);
+
+        questionCount++;
+
+        return {
+            text: decodeHTML(q.question),
+            type: "mcq",
+            options: shuffle([
+                decodeHTML(q.correct_answer),
+                ...q.incorrect_answers.map(a=>decodeHTML(a))
+            ]),
+            finished:false
+        };
+
+    }
+    catch(err){
+        document.getElementById("statusMsg").innerText =
+            "❌ Unable to connect to quiz server";
+        return { finished:true, score:score };
+    }
+}
+
+// -------- SUBMIT ANSWER --------
+async function apiSubmitAnswer(answer, latitude, longitude){
+
+    let isCorrect = answer === correctAnswer;
+
+    if(isCorrect) score += 10;
+    else score -= 5;
 
     return {
-        text: decodeHTML(q.question),
-        type: "mcq",
-        options: shuffle([q.correct_answer, ...q.incorrect_answers]),
-        finished: false
+        correct:isCorrect,
+        score:score
     };
 }
 
-// Check answer locally
-async function sendAnswer(answer, lat, lon) {
-    return {
-        correct: answer === currentCorrectAnswer
-    };
+// -------- LOCATION UPDATE --------
+async function updateLocation(lat, lon){
+    console.log("Location:",lat,lon);
 }
 
-// helpers
-function shuffle(arr) {
-    return arr.sort(() => Math.random() - 0.5);
+// -------- HELPERS --------
+function shuffle(arr){
+    return arr.sort(()=>Math.random()-0.5);
 }
 
-function decodeHTML(html) {
-    const txt = document.createElement("textarea");
-    txt.innerHTML = html;
+function decodeHTML(html){
+    const txt=document.createElement("textarea");
+    txt.innerHTML=html;
     return txt.value;
 }
+
