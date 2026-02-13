@@ -1,4 +1,4 @@
-const BASE_URL = "https://treasurehunt.cs.ucy.ac.cy/api";
+const BASE_URL = "https://opentdb.com/api.php?amount=1&type=multiple";
 
 // sessionId comes from app.js (do NOT declare again here)
 
