@@ -1,15 +1,28 @@
-let latitude = null;
-let longitude = null;
+let latitude = 0;
+let longitude = 0;
 
-function getLocation(){
-    navigator.geolocation.getCurrentPosition(pos=>{
-        latitude = pos.coords.latitude;
-        longitude = pos.coords.longitude;
-        console.log("Location:",latitude,longitude);
-    },()=>{
-        alert("Please enable GPS");
+// get current position once
+function getCurrentLocation() {
+    return new Promise((resolve, reject) => {
+
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                latitude = pos.coords.latitude;
+                longitude = pos.coords.longitude;
+
+                console.log("GPS update:", latitude, longitude);
+
+                updateLocation(latitude, longitude);
+                resolve();
+            },
+            () => reject(),
+            { enableHighAccuracy:true }
+        );
+
     });
 }
 
-setInterval(getLocation,120000); // every 2 minutes
-
+// automatic update every 2 minutes
+setInterval(() => {
+    getCurrentLocation();
+}, 120000);
